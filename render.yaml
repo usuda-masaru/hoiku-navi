@@ -3,7 +3,7 @@ services:
     name: hoiku-navi
     env: python
     buildCommand: "./build.sh"
-    startCommand: "python -m gunicorn hoiku_navi.wsgi:application"
+    startCommand: "python3 -m gunicorn hoiku_navi.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
