@@ -2,11 +2,11 @@ services:
   - type: web
     name: hoiku-navi
     env: python
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "./build.sh"
     startCommand: "gunicorn hoiku_navi.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.18
+        value: 3.11.0
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
