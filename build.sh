@@ -3,15 +3,15 @@
 set -o errexit
 
 # Upgrade pip
-pip install --upgrade pip
+python -m pip install --upgrade pip
 
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies  
+python -m pip install -r requirements.txt
 
 # Verify gunicorn installation
 echo "=== Checking gunicorn installation ==="
-which gunicorn || echo "gunicorn not in PATH"
-pip show gunicorn
+python -m pip show gunicorn
+python -c "import gunicorn; print(f'Gunicorn version: {gunicorn.__version__}')"
 
 # Collect static files
 python manage.py collectstatic --no-input
@@ -19,4 +19,4 @@ python manage.py collectstatic --no-input
 # Apply migrations
 python manage.py migrate
 
-echo "=== Build complete ==="
+echo "=== Build complete ==="#
