@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'hoiku_navi.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        config('SUPABASE_DATABASE_URL', default='sqlite:///db.sqlite3'),
+        config('SUPABASE_DATABASE_URL'),
         conn_max_age=600,
         conn_health_checks=True,
     )
