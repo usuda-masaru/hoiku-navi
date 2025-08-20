@@ -1,0 +1,1 @@
+web: python -m gunicorn hoiku_navi.wsgi:application
