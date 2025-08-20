@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{% if form.instance.pk %}見学感想編集{% else %}見学感想登録{% endif %} - HoikuNavi
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">
+    <i class="bi bi-star-fill"></i> 
+    {% if form.instance.pk %}見学感想編集{% else %}見学感想登録{% endif %}
+</h1>
+
+<div class="content-card">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ form.nursery.id_for_label }}" class="form-label">
+                    {{ form.nursery.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.nursery|add_class:"form-select" }}
+                {% if form.nursery.errors %}
+                    <div class="text-danger">{{ form.nursery.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.visit_schedule.id_for_label }}" class="form-label">
+                    {{ form.visit_schedule.label }}
+                </label>
+                {{ form.visit_schedule|add_class:"form-select" }}
+                {% if form.visit_schedule.errors %}
+                    <div class="text-danger">{{ form.visit_schedule.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <h4 class="mb-3">評価</h4>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.overall_rating.id_for_label }}" class="form-label">
+                    {{ form.overall_rating.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.overall_rating|add_class:"form-select" }}
+                {% if form.overall_rating.errors %}
+                    <div class="text-danger">{{ form.overall_rating.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.facility_rating.id_for_label }}" class="form-label">
+                    {{ form.facility_rating.label }}
+                </label>
+                {{ form.facility_rating|add_class:"form-select" }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.staff_rating.id_for_label }}" class="form-label">
+                    {{ form.staff_rating.label }}
+                </label>
+                {{ form.staff_rating|add_class:"form-select" }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.education_rating.id_for_label }}" class="form-label">
+                    {{ form.education_rating.label }}
+                </label>
+                {{ form.education_rating|add_class:"form-select" }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.access_rating.id_for_label }}" class="form-label">
+                    {{ form.access_rating.label }}
+                </label>
+                {{ form.access_rating|add_class:"form-select" }}
+            </div>
+        </div>
+        
+        <h4 class="mb-3">詳細な感想</h4>
+        <div class="mb-3">
+            <label for="{{ form.good_points.id_for_label }}" class="form-label">
+                {{ form.good_points.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.good_points|add_class:"form-control" }}
+            {% if form.good_points.errors %}
+                <div class="text-danger">{{ form.good_points.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.concern_points.id_for_label }}" class="form-label">
+                {{ form.concern_points.label }}
+            </label>
+            {{ form.concern_points|add_class:"form-control" }}
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.staff_impression.id_for_label }}" class="form-label">
+                {{ form.staff_impression.label }}
+            </label>
+            {{ form.staff_impression|add_class:"form-control" }}
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.children_atmosphere.id_for_label }}" class="form-label">
+                {{ form.children_atmosphere.label }}
+            </label>
+            {{ form.children_atmosphere|add_class:"form-control" }}
+        </div>
+        
+        <h4 class="mb-3">追加情報</h4>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.estimated_monthly_fee.id_for_label }}" class="form-label">
+                    {{ form.estimated_monthly_fee.label }}
+                </label>
+                {{ form.estimated_monthly_fee|add_class:"form-control" }}
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    {{ form.application_intention|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.application_intention.id_for_label }}">
+                        {{ form.application_intention.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.priority_rank.id_for_label }}" class="form-label">
+                    {{ form.priority_rank.label }}
+                </label>
+                {{ form.priority_rank|add_class:"form-control" }}
+            </div>
+        </div>
+        
+        <h4 class="mb-3">写真</h4>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.photo1.id_for_label }}" class="form-label">
+                    {{ form.photo1.label }}
+                </label>
+                {{ form.photo1|add_class:"form-control" }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.photo2.id_for_label }}" class="form-label">
+                    {{ form.photo2.label }}
+                </label>
+                {{ form.photo2|add_class:"form-control" }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.photo3.id_for_label }}" class="form-label">
+                    {{ form.photo3.label }}
+                </label>
+                {{ form.photo3|add_class:"form-control" }}
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary-custom">
+                <i class="bi bi-check-circle"></i> 
+                {% if form.instance.pk %}更新{% else %}登録{% endif %}
+            </button>
+            <a href="{% url 'nursery:impression_list' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> キャンセル
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

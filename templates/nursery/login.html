@@ -1,0 +1,36 @@
+{% extends 'base_auth.html' %}
+
+{% block title %}ログイン - HoikuNavi{% endblock %}
+
+{% block content %}
+<div class="auth-header">
+    <h1><i class="bi bi-house-heart-fill"></i> HoikuNavi</h1>
+    <p>保育園見学管理システム</p>
+</div>
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        ユーザー名またはパスワードが正しくありません。
+    </div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_username" class="form-label">ユーザー名</label>
+        <input type="text" class="form-control" name="username" id="id_username" required autofocus>
+    </div>
+    <div class="mb-3">
+        <label for="id_password" class="form-label">パスワード</label>
+        <input type="password" class="form-control" name="password" id="id_password" required>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-box-arrow-in-right"></i> ログイン
+    </button>
+</form>
+
+<div class="auth-footer">
+    アカウントをお持ちでない方は
+    <a href="{% url 'nursery:signup' %}">新規登録</a>
+</div>
+{% endblock %}

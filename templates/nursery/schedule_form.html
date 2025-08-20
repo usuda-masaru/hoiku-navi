@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{% if form.instance.pk %}見学スケジュール編集{% else %}見学スケジュール登録{% endif %} - HoikuNavi
+{% endblock %}
+
+{% block page_title %}
+{% if form.instance.pk %}見学スケジュール編集{% else %}見学スケジュール登録{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="{{ form.nursery.id_for_label }}" class="form-label">
+                {{ form.nursery.label }} <span class="text-danger">*</span>
+            </label>
+            {{ form.nursery|add_class:"form-select" }}
+            {% if form.nursery.errors %}
+                <div class="text-danger">{{ form.nursery.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ form.visit_date.id_for_label }}" class="form-label">
+                    {{ form.visit_date.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.visit_date|add_class:"form-control" }}
+                {% if form.visit_date.errors %}
+                    <div class="text-danger">{{ form.visit_date.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.visit_time.id_for_label }}" class="form-label">
+                    {{ form.visit_time.label }}
+                </label>
+                {{ form.visit_time|add_class:"form-control" }}
+                {% if form.visit_time.errors %}
+                    <div class="text-danger">{{ form.visit_time.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ form.status.id_for_label }}" class="form-label">
+                    {{ form.status.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.status|add_class:"form-select" }}
+                {% if form.status.errors %}
+                    <div class="text-danger">{{ form.status.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label for="{{ form.contact_person.id_for_label }}" class="form-label">
+                    {{ form.contact_person.label }}
+                </label>
+                {{ form.contact_person|add_class:"form-control" }}
+                {% if form.contact_person.errors %}
+                    <div class="text-danger">{{ form.contact_person.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="{{ form.notes.id_for_label }}" class="form-label">
+                {{ form.notes.label }}
+            </label>
+            {{ form.notes|add_class:"form-control" }}
+            {% if form.notes.errors %}
+                <div class="text-danger">{{ form.notes.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i> 
+                {% if form.instance.pk %}更新{% else %}登録{% endif %}
+            </button>
+            <a href="{% url 'nursery:schedule_list' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> キャンセル
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="content-card mt-3">
+    <h5><i class="bi bi-info-circle"></i> 登録後の機能</h5>
+    <p class="mb-2">見学スケジュールを登録すると、以下の機能が利用できます：</p>
+    <ul class="mb-0">
+        <li><strong>Googleカレンダー連携</strong> - ワンクリックでGoogleカレンダーに予定を追加</li>
+        <li><strong>リマインダー</strong> - 見学日が近づいたら通知</li>
+        <li><strong>感想記録</strong> - 見学後に感想や評価を記録</li>
+    </ul>
+</div>
+{% endblock %}

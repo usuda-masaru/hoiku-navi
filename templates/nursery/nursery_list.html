@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}保育園一覧 - HoikuNavi{% endblock %}
+{% block page_title %}保育園一覧{% endblock %}
+
+{% block content %}
+<div class="content-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-6">
+            <input type="text" name="q" class="form-control" 
+                   placeholder="保育園名、住所、施設番号で検索" 
+                   value="{{ request.GET.q }}">
+        </div>
+        <div class="col-md-4">
+            <select name="type" class="form-select">
+                <option value="">すべての施設タイプ</option>
+                {% for value, label in nursery_types %}
+                    <option value="{{ value }}" {% if request.GET.type == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary-custom w-100">
+                <i class="bi bi-search"></i> 検索
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if nurseries %}
+    {% for nursery in nurseries %}
+    <div class="nursery-card">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4>
+                    <a href="{% url 'nursery:nursery_detail' nursery.pk %}" class="text-decoration-none">
+                        {{ nursery.name }}
+                    </a>
+                </h4>
+                <p class="mb-1">
+                    <span class="badge-type">{{ nursery.nursery_type }}</span>
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ nursery.address|urlencode }}" 
+                       target="_blank" class="ms-2 text-decoration-none text-muted">
+                        <i class="bi bi-geo-alt"></i> {{ nursery.address }}
+                        <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem;"></i>
+                    </a>
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-telephone"></i> {{ nursery.phone_number }}
+                    {% if nursery.opening_time and nursery.closing_time %}
+                        <span class="ms-3">
+                            <i class="bi bi-clock"></i> 
+                            {{ nursery.opening_time|time:"H:i" }} - {{ nursery.closing_time|time:"H:i" }}
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                {% if nursery.avg_rating %}
+                    <div class="rating-stars mb-2">
+                        {% for i in "12345" %}
+                            {% if i|add:0 <= nursery.avg_rating %}
+                                <i class="bi bi-star-fill"></i>
+                            {% else %}
+                                <i class="bi bi-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="ms-2 text-muted">({{ nursery.avg_rating|floatformat:1 }})</span>
+                    </div>
+                {% endif %}
+                <div>
+                    <span class="badge bg-info">
+                        <i class="bi bi-calendar-check"></i> 見学 {{ nursery.visit_count }}回
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3">
+            <a href="{% url 'nursery:schedule_create' %}?nursery={{ nursery.pk }}" 
+               class="btn btn-sm btn-primary">
+                <i class="bi bi-calendar-plus"></i> 見学予定を追加
+            </a>
+            <a href="{% url 'nursery:nursery_update' nursery.pk %}" 
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-pencil"></i> 編集
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% if is_paginated %}
+    <nav aria-label="ページネーション" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">前へ</a>
+                </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}">次へ</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+{% else %}
+    <div class="content-card text-center">
+        <p class="mb-3">保育園が登録されていません。</p>
+        <a href="{% url 'nursery:nursery_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 最初の保育園を登録
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

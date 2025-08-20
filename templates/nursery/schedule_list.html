@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}見学スケジュール - HoikuNavi{% endblock %}
+{% block page_title %}見学スケジュール{% endblock %}
+
+{% block content %}
+<div class="content-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-10">
+            <select name="status" class="form-select">
+                <option value="">すべてのステータス</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary-custom w-100">
+                <i class="bi bi-filter"></i> 絞り込み
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if schedules %}
+    <div class="table-custom">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>見学日</th>
+                    <th>時間</th>
+                    <th>保育園</th>
+                    <th>ステータス</th>
+                    <th>担当者</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr>
+                    <td>{{ schedule.visit_date|date:"Y/m/d (D)" }}</td>
+                    <td>
+                        {% if schedule.visit_time %}
+                            {{ schedule.visit_time|time:"H:i" }}
+                        {% else %}
+                            <span class="text-muted">未定</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'nursery:nursery_detail' schedule.nursery.pk %}">
+                            {{ schedule.nursery.name }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="badge bg-{% if schedule.status == '完了' %}success{% elif schedule.status == 'キャンセル' %}danger{% else %}primary{% endif %}">
+                            {{ schedule.status }}
+                        </span>
+                    </td>
+                    <td>{{ schedule.contact_person|default:"-" }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="{% url 'nursery:schedule_to_calendar' schedule.pk %}" 
+                               class="btn btn-outline-success" title="Googleカレンダーに追加" target="_blank">
+                                <i class="bi bi-calendar-plus"></i>
+                            </a>
+                            <a href="{% url 'nursery:schedule_update' schedule.pk %}" 
+                               class="btn btn-outline-primary" title="編集">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% if schedule.status == '完了' %}
+                                <a href="{% url 'nursery:impression_create' %}?schedule={{ schedule.pk }}" 
+                                   class="btn btn-outline-warning" title="感想を書く">
+                                    <i class="bi bi-star"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="ページネーション" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">前へ</a>
+                </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">次へ</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+{% else %}
+    <div class="content-card text-center">
+        <p class="mb-3">見学スケジュールが登録されていません。</p>
+        <a href="{% url 'nursery:schedule_create' %}" class="btn btn-primary">
+            <i class="bi bi-calendar-plus"></i> 見学予定を追加
+        </a>
+    </div>
+{% endif %}
+
+<div class="content-card mt-3">
+    <h5><i class="bi bi-info-circle"></i> Googleカレンダー連携について</h5>
+    <p class="small mb-0">
+        <i class="bi bi-calendar-plus text-success"></i> ボタンをクリックすると、Googleカレンダーが開き、見学予定を簡単に追加できます。
+    </p>
+</div>
+{% endblock %}

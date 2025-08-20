@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}保育園マップ - HoikuNavi{% endblock %}
+{% block page_title %}保育園マップ{% endblock %}
+
+{% block content %}
+<div class="content-card">
+    <h3><i class="bi bi-geo-alt-fill"></i> 登録保育園の位置情報</h3>
+    <p class="text-muted">住所をクリックするとGoogle Mapsが開きます</p>
+    
+    <div class="table-responsive mt-3">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>保育園名</th>
+                    <th>施設タイプ</th>
+                    <th>住所</th>
+                    <th>アクション</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for nursery in nurseries %}
+                <tr>
+                    <td>
+                        <a href="{% url 'nursery:nursery_detail' nursery.pk %}" class="text-decoration-none">
+                            <strong>{{ nursery.name }}</strong>
+                        </a>
+                    </td>
+                    <td>
+                        <span class="badge-type">{{ nursery.nursery_type }}</span>
+                    </td>
+                    <td>
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ nursery.address|urlencode }}" 
+                           target="_blank" class="text-decoration-none">
+                            <i class="bi bi-geo-alt"></i> {{ nursery.address }}
+                        </a>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ nursery.address|urlencode }}" 
+                               target="_blank" class="btn btn-outline-primary" title="地図で見る">
+                                <i class="bi bi-map"></i>
+                            </a>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ nursery.address|urlencode }}" 
+                               target="_blank" class="btn btn-outline-primary" title="ルート検索">
+                                <i class="bi bi-sign-turn-right"></i>
+                            </a>
+                            <a href="{% url 'nursery:nursery_detail' nursery.pk %}" 
+                               class="btn btn-outline-secondary" title="詳細">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        保育園が登録されていません
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="content-card mt-3">
+    <h4><i class="bi bi-info-circle"></i> 使い方</h4>
+    <ul class="mb-0">
+        <li><strong>地図で見る</strong>: Google Mapsで保育園の位置を確認</li>
+        <li><strong>ルート検索</strong>: 現在地から保育園までのルートを検索</li>
+        <li><strong>詳細</strong>: 保育園の詳細情報を表示</li>
+    </ul>
+    <p class="mt-3 mb-0 text-muted">
+        <small>※ Google Mapsは新しいタブで開きます</small>
+    </p>
+</div>
+
+<div class="content-card mt-3">
+    <h4><i class="bi bi-lightbulb"></i> 便利な使い方のヒント</h4>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h6>複数の保育園を比較する場合</h6>
+            <ol class="small">
+                <li>各保育園の「地図で見る」を新しいタブで開く</li>
+                <li>Google Mapsの「保存」機能でリストを作成</li>
+                <li>マイマップで一覧表示して比較</li>
+            </ol>
+        </div>
+        <div class="col-md-6">
+            <h6>通勤経路で検討する場合</h6>
+            <ol class="small">
+                <li>「ルート検索」で自宅からの経路を確認</li>
+                <li>Google Mapsで「経由地を追加」を選択</li>
+                <li>職場を経由地に設定して所要時間を確認</li>
+            </ol>
+        </div>
+    </div>
+</div>
+{% endblock %}

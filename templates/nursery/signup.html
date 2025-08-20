@@ -1,0 +1,46 @@
+{% extends 'base_auth.html' %}
+
+{% block title %}新規登録 - HoikuNavi{% endblock %}
+
+{% block content %}
+<div class="auth-header">
+    <h1><i class="bi bi-house-heart-fill"></i> HoikuNavi</h1>
+    <p>新規アカウント登録</p>
+</div>
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                {{ error }}<br>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="id_username" class="form-label">ユーザー名</label>
+        <input type="text" class="form-control" name="username" id="id_username" required autofocus>
+        <small class="text-muted">150文字以下で、英数字と @/./+/-/_ のみ使用可能</small>
+    </div>
+    <div class="mb-3">
+        <label for="id_password1" class="form-label">パスワード</label>
+        <input type="password" class="form-control" name="password1" id="id_password1" required>
+        <small class="text-muted">8文字以上で設定してください</small>
+    </div>
+    <div class="mb-3">
+        <label for="id_password2" class="form-label">パスワード（確認）</label>
+        <input type="password" class="form-control" name="password2" id="id_password2" required>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-person-plus"></i> 登録
+    </button>
+</form>
+
+<div class="auth-footer">
+    すでにアカウントをお持ちの方は
+    <a href="{% url 'nursery:login' %}">ログイン</a>
+</div>
+{% endblock %}

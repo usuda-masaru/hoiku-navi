@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+{% if form.instance.pk %}保育園編集{% else %}保育園登録{% endif %} - HoikuNavi
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">
+    <i class="bi bi-building"></i> 
+    {% if form.instance.pk %}保育園情報編集{% else %}新規保育園登録{% endif %}
+</h1>
+
+<div class="content-card">
+    <form method="post" class="needs-validation">
+        {% csrf_token %}
+        
+        <h4 class="mb-3">基本情報</h4>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.facility_number.id_for_label }}" class="form-label">
+                    {{ form.facility_number.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.facility_number|add_class:"form-control" }}
+                {% if form.facility_number.errors %}
+                    <div class="text-danger">{{ form.facility_number.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <label for="{{ form.name.id_for_label }}" class="form-label">
+                    {{ form.name.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.name|add_class:"form-control" }}
+                {% if form.name.errors %}
+                    <div class="text-danger">{{ form.name.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.nursery_type.id_for_label }}" class="form-label">
+                    {{ form.nursery_type.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.nursery_type|add_class:"form-select" }}
+                {% if form.nursery_type.errors %}
+                    <div class="text-danger">{{ form.nursery_type.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <label for="{{ form.address.id_for_label }}" class="form-label">
+                    {{ form.address.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.address|add_class:"form-control" }}
+                {% if form.address.errors %}
+                    <div class="text-danger">{{ form.address.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                    {{ form.phone_number.label }} <span class="text-danger">*</span>
+                </label>
+                {{ form.phone_number|add_class:"form-control" }}
+                {% if form.phone_number.errors %}
+                    <div class="text-danger">{{ form.phone_number.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <h4 class="mb-3 mt-4">保育時間</h4>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="{{ form.opening_time.id_for_label }}" class="form-label">
+                    {{ form.opening_time.label }}
+                </label>
+                {{ form.opening_time|add_class:"form-control" }}
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.closing_time.id_for_label }}" class="form-label">
+                    {{ form.closing_time.label }}
+                </label>
+                {{ form.closing_time|add_class:"form-control" }}
+            </div>
+            <div class="col-md-3">
+                <div class="form-check mt-4">
+                    {{ form.saturday_available|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.saturday_available.id_for_label }}">
+                        {{ form.saturday_available.label }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <h4 class="mb-3 mt-4">施設情報</h4>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="{{ form.capacity.id_for_label }}" class="form-label">
+                    {{ form.capacity.label }}
+                </label>
+                {{ form.capacity|add_class:"form-control" }}
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.age_from_months.id_for_label }}" class="form-label">
+                    {{ form.age_from_months.label }}
+                </label>
+                {{ form.age_from_months|add_class:"form-control" }}
+                <small class="text-muted">{{ form.age_from_months.help_text }}</small>
+            </div>
+            <div class="col-md-3">
+                <label for="{{ form.age_to_years.id_for_label }}" class="form-label">
+                    {{ form.age_to_years.label }}
+                </label>
+                {{ form.age_to_years|add_class:"form-control" }}
+                <small class="text-muted">{{ form.age_to_years.help_text }}</small>
+            </div>
+        </div>
+        
+        <h4 class="mb-3 mt-4">設備・サービス</h4>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-check mb-2">
+                    {{ form.has_contact_app|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.has_contact_app.id_for_label }}">
+                        {{ form.has_contact_app.label }}
+                    </label>
+                </div>
+                <input type="text" name="contact_app_name" 
+                       class="form-control" 
+                       placeholder="アプリ名（例：キッズリー、コドモン）"
+                       value="{{ form.contact_app_name.value|default:'' }}">
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_school_bus|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.has_school_bus.id_for_label }}">
+                        {{ form.has_school_bus.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_parking|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.has_parking.id_for_label }}">
+                        {{ form.has_parking.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_lunch|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.has_lunch.id_for_label }}">
+                        {{ form.has_lunch.label }}
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-check">
+                    {{ form.has_allergy_support|add_class:"form-check-input" }}
+                    <label class="form-check-label" for="{{ form.has_allergy_support.id_for_label }}">
+                        {{ form.has_allergy_support.label }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <h4 class="mb-3 mt-4">備考</h4>
+        <div class="mb-3">
+            {{ form.notes|add_class:"form-control" }}
+        </div>
+        
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary-custom">
+                <i class="bi bi-check-circle"></i> 
+                {% if form.instance.pk %}更新{% else %}登録{% endif %}
+            </button>
+            <a href="{% url 'nursery:nursery_list' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> キャンセル
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

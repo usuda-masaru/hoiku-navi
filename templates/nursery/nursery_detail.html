@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ nursery.name }} - HoikuNavi{% endblock %}
+{% block page_title %}{{ nursery.name }}{% endblock %}
+
+{% block content %}
+<div class="content-card mb-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>基本情報</h4>
+            <table class="table">
+                <tr>
+                    <th width="40%">施設番号</th>
+                    <td>{{ nursery.facility_number }}</td>
+                </tr>
+                <tr>
+                    <th>施設タイプ</th>
+                    <td><span class="badge-nursery-type">{{ nursery.nursery_type }}</span></td>
+                </tr>
+                <tr>
+                    <th>住所</th>
+                    <td>
+                        {{ nursery.address }}
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ nursery.address|urlencode }}" 
+                           target="_blank" class="ms-2 btn btn-sm btn-outline-primary">
+                            <i class="bi bi-map"></i> 地図で見る
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>電話番号</th>
+                    <td>{{ nursery.phone_number }}</td>
+                </tr>
+                <tr>
+                    <th>保育時間</th>
+                    <td>
+                        {% if nursery.opening_time and nursery.closing_time %}
+                            {{ nursery.opening_time|time:"H:i" }} - {{ nursery.closing_time|time:"H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>土曜保育</th>
+                    <td>
+                        {% if nursery.saturday_available %}
+                            <i class="bi bi-check-circle-fill text-success"></i> あり
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger"></i> なし
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="col-md-6">
+            <h4>施設詳細</h4>
+            <table class="table">
+                <tr>
+                    <th width="40%">定員</th>
+                    <td>{{ nursery.capacity|default:"-" }}名</td>
+                </tr>
+                <tr>
+                    <th>受入月齢</th>
+                    <td>
+                        {% if nursery.age_from_months %}
+                            {{ nursery.age_from_months }}ヶ月から
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>連絡帳アプリ</th>
+                    <td>
+                        {% if nursery.has_contact_app %}
+                            <i class="bi bi-check-circle-fill text-success"></i> 
+                            {{ nursery.contact_app_name|default:"あり" }}
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger"></i> なし
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>送迎バス</th>
+                    <td>
+                        {% if nursery.has_school_bus %}
+                            <i class="bi bi-check-circle-fill text-success"></i> あり
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger"></i> なし
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>駐車場</th>
+                    <td>
+                        {% if nursery.has_parking %}
+                            <i class="bi bi-check-circle-fill text-success"></i> あり
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger"></i> なし
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>給食</th>
+                    <td>
+                        {% if nursery.has_lunch %}
+                            <i class="bi bi-check-circle-fill text-success"></i> あり
+                        {% else %}
+                            <i class="bi bi-x-circle text-danger"></i> なし
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    {% if nursery.notes %}
+    <div class="mt-3">
+        <h4>備考</h4>
+        <p>{{ nursery.notes|linebreaks }}</p>
+    </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{% url 'nursery:nursery_update' nursery.pk %}" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> 編集
+        </a>
+        <a href="{% url 'nursery:schedule_create' %}?nursery={{ nursery.pk }}" class="btn btn-primary">
+            <i class="bi bi-calendar-plus"></i> 見学予定を追加
+        </a>
+        <a href="{% url 'nursery:impression_create' %}?nursery={{ nursery.pk }}" class="btn btn-primary">
+            <i class="bi bi-star"></i> 感想を記入
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="content-card">
+            <h3><i class="bi bi-calendar-check"></i> 見学スケジュール</h3>
+            {% if schedules %}
+                <div class="list-group mt-3">
+                    {% for schedule in schedules %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between">
+                            <h6>{{ schedule.visit_date|date:"Y年m月d日" }}</h6>
+                            <span class="badge bg-{% if schedule.status == '完了' %}success{% elif schedule.status == 'キャンセル' %}danger{% else %}primary{% endif %}">
+                                {{ schedule.status }}
+                            </span>
+                        </div>
+                        {% if schedule.visit_time %}
+                            <p class="mb-1"><i class="bi bi-clock"></i> {{ schedule.visit_time|time:"H:i" }}</p>
+                        {% endif %}
+                        {% if schedule.contact_person %}
+                            <p class="mb-1"><i class="bi bi-person"></i> {{ schedule.contact_person }}</p>
+                        {% endif %}
+                        {% if schedule.notes %}
+                            <small class="text-muted">{{ schedule.notes }}</small>
+                        {% endif %}
+                        <div class="mt-2">
+                            <a href="{% url 'nursery:schedule_to_calendar' schedule.pk %}" 
+                               class="btn btn-sm btn-success" target="_blank">
+                                <i class="bi bi-calendar-plus"></i> Googleカレンダー
+                            </a>
+                            <a href="{% url 'nursery:schedule_update' schedule.pk %}" class="btn btn-sm btn-outline-secondary">
+                                編集
+                            </a>
+                            {% if schedule.status == '完了' and not schedule.impression %}
+                                <a href="{% url 'nursery:impression_create' %}?schedule={{ schedule.pk }}" class="btn btn-sm btn-warning">
+                                    感想を書く
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted mt-3">見学スケジュールはまだありません。</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="content-card">
+            <h3><i class="bi bi-star-fill"></i> 見学感想</h3>
+            {% if impressions %}
+                {% for impression in impressions %}
+                <div class="border rounded p-3 mt-3">
+                    <div class="rating-stars mb-2">
+                        総合評価：
+                        {% for i in "12345" %}
+                            {% if i|add:0 <= impression.overall_rating %}
+                                <i class="bi bi-star-fill"></i>
+                            {% else %}
+                                <i class="bi bi-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <h6>良かった点</h6>
+                    <p>{{ impression.good_points }}</p>
+                    
+                    {% if impression.concern_points %}
+                        <h6>気になった点</h6>
+                        <p>{{ impression.concern_points }}</p>
+                    {% endif %}
+                    
+                    {% if impression.application_intention %}
+                        <p class="mb-0">
+                            <span class="badge bg-success">申込意向あり</span>
+                            {% if impression.priority_rank %}
+                                優先順位: {{ impression.priority_rank }}位
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                    
+                    <div class="mt-2">
+                        <a href="{% url 'nursery:impression_update' impression.pk %}" class="btn btn-sm btn-outline-secondary">
+                            編集
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted mt-3">感想はまだ記録されていません。</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="content-card mt-4">
+    <h3><i class="bi bi-geo-alt-fill"></i> アクセス情報</h3>
+    <div class="d-flex gap-3">
+        <a href="https://www.google.com/maps/search/?api=1&query={{ nursery.address|urlencode }}" 
+           target="_blank" class="btn btn-primary">
+            <i class="bi bi-map"></i> Google Mapsで開く
+        </a>
+        <a href="https://www.google.com/maps/dir/?api=1&destination={{ nursery.address|urlencode }}" 
+           target="_blank" class="btn btn-outline-primary">
+            <i class="bi bi-sign-turn-right"></i> ルート検索
+        </a>
+    </div>
+    <p class="mt-3 text-muted">
+        <i class="bi bi-info-circle"></i> ボタンをクリックすると、Google Mapsが新しいタブで開きます。
+    </p>
+</div>
+{% endblock %}

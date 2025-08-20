@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}ホーム - HoikuNavi{% endblock %}
+
+{% block content %}
+<h1 class="page-title">
+    <i class="bi bi-house-heart"></i> 保育園見学管理システム
+</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_nurseries }}</div>
+            <div class="stat-label">登録保育園数</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ scheduled_visits }}</div>
+            <div class="stat-label">予定見学数</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ completed_visits }}</div>
+            <div class="stat-label">完了見学数</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_impressions }}</div>
+            <div class="stat-label">感想記録数</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="content-card">
+            <h3 class="mb-3">
+                <i class="bi bi-calendar-check"></i> 直近の見学予定
+            </h3>
+            {% if recent_schedules %}
+                <div class="list-group">
+                    {% for schedule in recent_schedules %}
+                    <a href="{% url 'nursery:nursery_detail' schedule.nursery.pk %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ schedule.nursery.name }}</h6>
+                            <small>{{ schedule.visit_date|date:"m/d" }}</small>
+                        </div>
+                        <p class="mb-1">
+                            <i class="bi bi-clock"></i> 
+                            {% if schedule.visit_time %}
+                                {{ schedule.visit_time|time:"H:i" }}
+                            {% else %}
+                                時間未定
+                            {% endif %}
+                        </p>
+                        <small class="text-muted">{{ schedule.nursery.address }}</small>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">見学予定はありません</p>
+            {% endif %}
+            <div class="mt-3">
+                <a href="{% url 'nursery:schedule_create' %}" class="btn btn-primary-custom">
+                    <i class="bi bi-plus-circle"></i> 見学予定を追加
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 mb-4">
+        <div class="content-card">
+            <h3 class="mb-3">
+                <i class="bi bi-star-fill"></i> 高評価の保育園
+            </h3>
+            {% if top_rated %}
+                <div class="list-group">
+                    {% for impression in top_rated %}
+                    <a href="{% url 'nursery:nursery_detail' impression.nursery.pk %}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ impression.nursery.name }}</h6>
+                            <div class="rating-stars">
+                                {% for i in "12345" %}
+                                    {% if i|add:0 <= impression.overall_rating %}
+                                        <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="mb-1 text-truncate">{{ impression.good_points|truncatewords:10 }}</p>
+                        <small class="text-muted">
+                            <span class="badge-nursery-type">{{ impression.nursery.nursery_type }}</span>
+                        </small>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">まだ評価がありません</p>
+            {% endif %}
+            <div class="mt-3">
+                <a href="{% url 'nursery:impression_list' %}" class="btn btn-success-custom">
+                    <i class="bi bi-list-stars"></i> すべての感想を見る
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="content-card text-center">
+            <h3 class="mb-4">クイックアクセス</h3>
+            <div class="row">
+                <div class="col-md-3 col-6 mb-3">
+                    <a href="{% url 'nursery:nursery_create' %}" class="btn btn-lg btn-primary-custom w-100">
+                        <i class="bi bi-plus-square"></i><br>
+                        保育園登録
+                    </a>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <a href="{% url 'nursery:schedule_create' %}" class="btn btn-lg btn-success-custom w-100">
+                        <i class="bi bi-calendar-plus"></i><br>
+                        見学予定追加
+                    </a>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <a href="{% url 'nursery:impression_create' %}" class="btn btn-lg btn-primary-custom w-100">
+                        <i class="bi bi-pencil-square"></i><br>
+                        感想記入
+                    </a>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <a href="{% url 'nursery:map_view' %}" class="btn btn-lg btn-success-custom w-100">
+                        <i class="bi bi-map"></i><br>
+                        マップ表示
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
